@@ -39,14 +39,17 @@ long long Rabin_Karp::hash(std::string stringToHash) { // find the hash of a str
 
 void Rabin_Karp::output(std::string searchString, std::list<int> foundIndexes, int count) {
     if (foundIndexes.size() == 1) {
-        std::cout << "The string " << searchString << " was found at index " << foundIndexes.front() << "." << std::endl;
+        std::cout << "The string " << "'" << searchString << "'" << " was found at index " << foundIndexes.front() << "." << std::endl;
         std::cout << "It was found " << count << " time." << std::endl;
     } else {
-        std::string outputIndexes = "The string ";
-        outputIndexes += searchString;
-        outputIndexes += " was found at indexes ";
+        std::string outputIndexes = "The string '";
+        outputIndexes += searchString + "' was found at indexes ";
         for(std::list<int>::iterator i = foundIndexes.begin(); i != foundIndexes.end(); ++i) {
-            outputIndexes += std::to_string(*i) + ", ";
+            if (*i == foundIndexes.back())  {
+                outputIndexes += "and " + std::to_string(*i);
+            } else {
+                outputIndexes += std::to_string(*i) + ", ";
+            }
         }
         std::cout << outputIndexes << std::endl;
         std::cout << "It was found " << count << " times." << std::endl;

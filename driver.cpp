@@ -5,8 +5,8 @@
 
 //Driver Code
 int main() {
-    std::string inputString = "123456789";
+    std::string fileName = "file.txt";
     std::string searchString = "123";
-    Rabin_Karp Rabin1(inputString, searchString, false);
+    Rabin_Karp Rabin1(fileName, searchString, true);
     Rabin1.search();
 }

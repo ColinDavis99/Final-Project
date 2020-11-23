@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <list>
 #include "rabin_karp.h"
 
@@ -8,6 +9,12 @@ Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool 
     this->inputString = inputString;
     this->searchString = searchString;
     this->isFile = isFile;
+
+    if (isFile) { // if it is a file format instead of a string
+        this->inputString = processFile(inputString);
+        std::cout << inputString << std::endl;
+    }
+
 }
 
 // Rabin1 = Rabin_Karp("aoee", "wfoiwjef", false); // example of searching for a string in a string
@@ -21,6 +28,21 @@ std::string Rabin_Karp::getSearchWindow() {
 
 void Rabin_Karp::setSearchWindow(std::string searchWindow) {
     this->searchWindow = searchWindow;
+}
+
+std::string Rabin_Karp::processFile(std::string filename) { //converts inputString into the contents of the file and stores it back in inputString
+    std::ifstream inFile;
+
+    inFile.open(filename);
+
+    std::stringstream stringStream;
+    stringStream << inFile.rdbuf(); // read the file until buffer
+    std::string convertedString = stringStream.str(); // store the contents in a string
+
+    inFile.close();
+
+    return convertedString;
+
 }
 
 long long Rabin_Karp::hash(std::string stringToHash) { // find the hash of a string or substring
@@ -38,7 +60,9 @@ long long Rabin_Karp::hash(std::string stringToHash) { // find the hash of a str
 }
 
 void Rabin_Karp::output(std::string searchString, std::list<int> foundIndexes, int count) {
-    if (foundIndexes.size() == 1) {
+    if (foundIndexes.empty()) {
+        std::cout << "The string " << "'" << searchString << "'" << " was not found.";
+    } else if (foundIndexes.size() == 1) {
         std::cout << "The string " << "'" << searchString << "'" << " was found at index " << foundIndexes.front() << "." << std::endl;
         std::cout << "It was found " << count << " time." << std::endl;
     } else {
@@ -62,15 +86,13 @@ void Rabin_Karp::search() { // performs the actual string search
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
-    if (!isFile) {
-        long long searchHash = hash(searchString);
-        int searchStringLength = searchString.length();
-        for (int i = 0; i + searchStringLength - 1 < inputString.length(); i++) { // goes until the length of the string is smaller than a search window
-            searchWindow = inputString.substr(i, searchStringLength);
-            if (hash(searchWindow) == searchHash) {
-                foundIndexes.push_back(i);
-                count++;
-            }
+    long long searchHash = hash(searchString);
+    int searchStringLength = searchString.length();
+    for (int i = 0; i + searchStringLength - 1 < inputString.length(); i++) { // goes until the length of the string is smaller than a search window
+        searchWindow = inputString.substr(i, searchStringLength);
+        if (hash(searchWindow) == searchHash) { // if hashes equal, and therefore strings are equal.
+            foundIndexes.push_back(i);
+            count++;
         }
     }
 

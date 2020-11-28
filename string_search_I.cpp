@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <list>
-#include "rabin_karp.h"
+#include "string_search_I.h"
 
 Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool isFile) { // constructor
     this->inputString = inputString;
@@ -12,7 +12,6 @@ Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool 
 
     if (isFile) { // if it is a file format instead of a string
         this->inputString = processFile(inputString);
-        std::cout << inputString << std::endl;
     }
 
 }
@@ -61,7 +60,7 @@ long long Rabin_Karp::hash(std::string stringToHash) { // find the hash of a str
 
 void Rabin_Karp::output(std::string searchString, std::list<int> foundIndexes, int count) {
     if (foundIndexes.empty()) {
-        std::cout << "The string " << "'" << searchString << "'" << " was not found.";
+        std::cout << "The string " << "'" << searchString << "'" << " was not found." << std::endl;
     } else if (foundIndexes.size() == 1) {
         std::cout << "The string " << "'" << searchString << "'" << " was found at index " << foundIndexes.front() << "." << std::endl;
         std::cout << "It was found " << count << " time." << std::endl;
@@ -95,6 +94,72 @@ void Rabin_Karp::search() { // performs the actual string search
             count++;
         }
     }
+
+    output(searchString, foundIndexes, count);
+}
+
+Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, bool isFile) { // constructor
+    this->inputString = inputString;
+    this->searchString = searchString;
+    this->isFile = isFile;
+
+    if (isFile) { // if it is a file format instead of a string
+        this->inputString = processFile(inputString);
+    }
+
+}
+
+// Rabin1 = Boyer_Moore("aoee", "wfoiwjef", false); // example of searching for a string in a string
+// Rabin2 = Boyer_Moore("file.txt", "sedjfw", true); // example of searching for a string in a file
+// Rabin1.search();
+// Rabin2.search();
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+std::string Boyer_Moore::processFile(std::string filename) { //converts inputString into the contents of the file and stores it back in inputString
+    std::ifstream inFile;
+
+    inFile.open(filename);
+
+    std::stringstream stringStream;
+    stringStream << inFile.rdbuf(); // read the file until buffer
+    std::string convertedString = stringStream.str(); // store the contents in a string
+
+    inFile.close();
+
+    return convertedString;
+
+}
+
+void Boyer_Moore::output(std::string searchString, std::list<int> foundIndexes, int count) {
+    if (foundIndexes.empty()) {
+        std::cout << "The string " << "'" << searchString << "'" << " was not found." << std::endl;
+    } else if (foundIndexes.size() == 1) {
+        std::cout << "The string " << "'" << searchString << "'" << " was found at index " << foundIndexes.front() << "." << std::endl;
+        std::cout << "It was found " << count << " time." << std::endl;
+    } else {
+        std::string outputIndexes = "The string '";
+        outputIndexes += searchString + "' was found at indexes ";
+        for(std::list<int>::iterator i = foundIndexes.begin(); i != foundIndexes.end(); ++i) {
+            if (*i == foundIndexes.back())  {
+                outputIndexes += "and " + std::to_string(*i);
+            } else {
+                outputIndexes += std::to_string(*i) + ", ";
+            }
+        }
+        std::cout << outputIndexes << std::endl;
+        std::cout << "It was found " << count << " times." << std::endl;
+    }
+
+}
+
+
+void Boyer_Moore::search() { // performs the actual string search
+    std::list<int> foundIndexes; // list of the indexes where the search string was found
+    int count = 0; // count the number of times searchString is found in inputString
+
+    // implement Boyer_Moore algorithm here
+    std::cout << "Boyer-Moore" << std::endl;
 
     output(searchString, foundIndexes, count);
 }

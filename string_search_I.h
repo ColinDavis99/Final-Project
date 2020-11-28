@@ -12,14 +12,13 @@ class Rabin_Karp {
         bool isFile; // determines if string describes the name of a file or just a search string
         std::string searchWindow;
 
-        static std::string processFile(std::string filename);
-        static long long hash(std::string stringToHash); //find the hash value of a string or substring
-        static void output(std::string searchString, std::list<int> foundIndexes, int count);
-
      public :
-        Rabin_Karp(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
+        Rabin_Karp(std::string &inputString, std::string &searchString, bool isFile); // constructor for looking through a txt file
         std::string getSearchWindow();
-        void setSearchWindow(std::string searchWindow);
+        static std::string processFile(std::string &filename);
+        static long long hash(std::string &stringToHash); //find the hash value of a string or substring
+        static void output(std::string &searchString, std::list<int> &foundIndexes, int &count);
+        void setSearchWindow(std::string &searchWindow);
         void search(); //search the file or input string for the search string
 };
 
@@ -31,10 +30,8 @@ class Boyer_Moore {
 
      public :
         Boyer_Moore(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
-
-        static std::string processFile(std::string filename);
-        static void output(std::string searchString, std::list<int> foundIndexes, int count);
-
+        static std::string processFile(std::string &filename);
+        static void output(std::string &searchString, std::list<int> &foundIndexes, int &count);
         void search(); //search the file or input string for the search string
 };
 

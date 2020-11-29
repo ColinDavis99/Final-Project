@@ -4,11 +4,12 @@
 #include <sstream>
 #include <list>
 #include "string_search_I.h"
+#include <chrono>
 
 //--------------------------------------------------------------------------------------------------------------------------------
 //                                              | Rabin-Karp |
 //--------------------------------------------------------------------------------------------------------------------------------
-Rabin_Karp::Rabin_Karp (std::string &inputString, std::string &searchString, bool isFile) { // constructor
+Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool isFile) { // constructor
     this->inputString = inputString;
     this->searchString = searchString;
     this->isFile = isFile;
@@ -16,6 +17,7 @@ Rabin_Karp::Rabin_Karp (std::string &inputString, std::string &searchString, boo
     if (isFile) { // if it is a file format instead of a string
         this->inputString = processFile(inputString);
     }
+
 
 }
 
@@ -78,8 +80,29 @@ void Rabin_Karp::output(std::string &searchString, std::list<int> &foundIndexes,
 
 }
 
+void Rabin_Karp::findRunTime(auto &t_start) {
+    auto t_finish = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
+    int t_out = duration;
+    this-> t_out = t_out;
+    std::cout << "This Search Took "<< t_out<< " Microseconds" << std::endl;
+    std::cout << std::endl;
+}
+
+//Getters and Setters for Set time points
+int Rabin_Karp::getRunTime() {
+    return t_out;
+}
+
+void Rabin_Karp::setRunTime(int t_out) {
+    this->t_out = t_out;
+}
+
+
 
 void Rabin_Karp::search() { // performs the actual string search
+    //StartRuntime Here
+    auto t_start = std::chrono::high_resolution_clock::now();
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
@@ -94,6 +117,9 @@ void Rabin_Karp::search() { // performs the actual string search
     }
 
     output(searchString, foundIndexes, count);
+    findRunTime(t_start);
+
+
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -119,8 +145,27 @@ void Boyer_Moore::output(std::string &searchString, std::list<int> &foundIndexes
     Rabin_Karp::output(searchString,foundIndexes,count);
 }
 
+void Boyer_Moore::findRunTime(auto &t_start) {
+    auto t_finish = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
+    int t_out = duration;
+    this-> t_out = t_out;
+    std::cout << "This Search Took "<< t_out<< " Microseconds" << std::endl;
+    std::cout << std::endl;
+}
+
+
+int Boyer_Moore::getRunTime() {
+    return t_out;
+}
+
+void Boyer_Moore::setRunTime(int t_out) {
+    this->t_out = t_out;
+}
 
 void Boyer_Moore::search() { // performs the actual string search
+    //t start
+    auto t_start = std::chrono::high_resolution_clock::now();
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
@@ -128,4 +173,6 @@ void Boyer_Moore::search() { // performs the actual string search
     std::cout << "Boyer-Moore" << std::endl;
 
     Boyer_Moore::output(searchString, foundIndexes, count);
+
+    findRunTime(t_start);
 }

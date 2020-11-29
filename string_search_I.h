@@ -11,14 +11,26 @@ class Rabin_Karp {
         std::string searchString; //string you are searching for
         bool isFile; // determines if string describes the name of a file or just a search string
         std::string searchWindow;
+        int t_out; // runtime duration
 
      public :
-        Rabin_Karp(std::string &inputString, std::string &searchString, bool isFile); // constructor for looking through a txt file
+
+        // constructor
+        Rabin_Karp(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
+
+        // getters and setters
         std::string getSearchWindow();
+        void setSearchWindow(std::string &searchWindow);
+        int getRunTime();
+        void setRunTime(int t_out);
+
+        // static functions
         static std::string processFile(std::string &filename);
         static long long hash(std::string &stringToHash); //find the hash value of a string or substring
         static void output(std::string &searchString, std::list<int> &foundIndexes, int &count);
-        void setSearchWindow(std::string &searchWindow);
+
+        // object functions
+        void findRunTime(auto &t_start);
         void search(); //search the file or input string for the search string
 };
 
@@ -27,11 +39,22 @@ class Boyer_Moore {
         std::string inputString; // can be filename or string
         std::string searchString; //string you are searching for
         bool isFile; // determines if string describes the name of a file or just a search string
+        int t_out; // runtime duration
 
      public :
+        //constructor
         Boyer_Moore(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
+
+        //getters and setters
+        int getRunTime();
+        void setRunTime(int t_out);
+
+        //static functions
         static std::string processFile(std::string &filename);
         static void output(std::string &searchString, std::list<int> &foundIndexes, int &count);
+
+        //object functions
+        void findRunTime(auto &t_start);
         void search(); //search the file or input string for the search string
 };
 

@@ -5,6 +5,9 @@
 #include <list>
 #include "string_search_I.h"
 
+//--------------------------------------------------------------------------------------------------------------------------------
+//                                              | Rabin-Karp |
+//--------------------------------------------------------------------------------------------------------------------------------
 Rabin_Karp::Rabin_Karp (std::string &inputString, std::string &searchString, bool isFile) { // constructor
     this->inputString = inputString;
     this->searchString = searchString;
@@ -15,11 +18,6 @@ Rabin_Karp::Rabin_Karp (std::string &inputString, std::string &searchString, boo
     }
 
 }
-
-// Rabin1 = Rabin_Karp("aoee", "wfoiwjef", false); // example of searching for a string in a string
-// Rabin2 = Rabin_Karp("file.txt", "sedjfw", true); // example of searching for a string in a file
-// Rabin1.search();
-// Rabin2.search();
 
 std::string Rabin_Karp::getSearchWindow() {
     return searchWindow;
@@ -98,7 +96,9 @@ void Rabin_Karp::search() { // performs the actual string search
     output(searchString, foundIndexes, count);
 }
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------
+//                                              | Booyer-Moore |
+//--------------------------------------------------------------------------------------------------------------------------------
 
 Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, bool isFile) { // constructor
     this->inputString = inputString;
@@ -112,7 +112,7 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
 }
 
 std::string Boyer_Moore::processFile(std::string &filename) {
-    return Rabin_Karp::processFile(filename); // calls the Rabin_Karp process file function (will be the same)sx
+    return Rabin_Karp::processFile(filename); // calls the Rabin_Karp process file function (will be the same)
 }
 
 void Boyer_Moore::output(std::string &searchString, std::list<int> &foundIndexes, int &count) { // calls the Rabin_Karp output function (will be the same)
@@ -129,7 +129,3 @@ void Boyer_Moore::search() { // performs the actual string search
 
     Boyer_Moore::output(searchString, foundIndexes, count);
 }
-
-
-//Rabin_Karp::hash("asiejfwojef")
-//std::cout

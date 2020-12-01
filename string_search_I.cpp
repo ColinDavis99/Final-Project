@@ -135,6 +135,8 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
         this->inputString = processFile(inputString);
     }
 
+    this->idx = searchString.length()-1; //set initial index (goes right to left)
+
 }
 
 std::string Boyer_Moore::processFile(std::string &filename) {
@@ -163,16 +165,78 @@ void Boyer_Moore::setRunTime(int t_out) {
     this->t_out = t_out;
 }
 
+int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength) {
+    int shifts = 0;
+    idx += searchLength;
+    if (searchIdx == 0) {
+        if (searchString[0] == bad) {
+            idx++;
+        } else {
+            idx += searchLength-1;
+        }
+    } else {
+        for (int i = searchIdx-1; i >= 0; i--) {
+            std::cout << i << std::endl;
+            shifts++;
+            if (searchString[i] == bad) { // bad char found in searchString
+                idx += shifts;
+                break;
+            } else if (i == 0) { // bad char not found in searchString
+                idx += searchLength-1;
+            }
+        }
+    }
+
+    return idx;
+}
+
+int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength) {
+    int stopper = 0;
+    int tempIdx = idx; // bad char index if applicable
+    char bad;
+    int searchIdx; // index of search that matches where the bad char occurs
+    while (stopper - searchLength != 0) {
+        stopper++;
+        if (inputString[tempIdx] != searchString[searchLength-stopper]) { // if bad character
+            bad = inputString[tempIdx];
+            searchIdx = searchLength - stopper;
+            break;
+        } else if (stopper - searchLength == 0) { // on last iteration, if everything is a match
+            foundIndexes.push_back(idx-searchLength+1);
+            count++;
+            idx++; // shift over 1
+            break;
+        }
+        tempIdx--;
+    }
+
+    return calulateShiftsBadChar(idx, bad, searchString, searchIdx, searchLength);
+}
+
+
 void Boyer_Moore::search() { // performs the actual string search
-    //t start
-    auto t_start = std::chrono::high_resolution_clock::now();
+    // start calculating runtime
+    auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
-    // implement Boyer_Moore algorithm here
-    std::cout << "Boyer-Moore" << std::endl;
+    // Preprocessing
+        // is where the lookup tables for boyer moore will be generated
+        // no idea how to do this yet.. all examples use like 5 characters not entire ASCII ????
+
+    // Implementation of Algorithm
+    int searchLength = searchString.length();
+    int inputLength = inputString.length();
+    if (inputLength < searchLength) { // check for error with input
+        std::cout << "error with length of input" << std::endl;
+        exit(0);
+    } else {
+        while (idx < inputLength - searchLength) {
+            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength);
+        }
+    }
 
     Boyer_Moore::output(searchString, foundIndexes, count);
-
     findRunTime(t_start);
+
 }

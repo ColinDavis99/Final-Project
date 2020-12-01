@@ -40,6 +40,7 @@ class Boyer_Moore {
         std::string searchString; //string you are searching for
         bool isFile; // determines if string describes the name of a file or just a search string
         int t_out; // runtime duration
+        int idx;
 
      public :
         //constructor
@@ -52,6 +53,9 @@ class Boyer_Moore {
         //static functions
         static std::string processFile(std::string &filename);
         static void output(std::string &searchString, std::list<int> &foundIndexes, int &count);
+        static int badChar(int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength);
+        static int calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength);
+
 
         //object functions
         void findRunTime(auto &t_start);

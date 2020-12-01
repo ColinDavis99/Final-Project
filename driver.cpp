@@ -14,7 +14,7 @@
 // -----------------------
 // Running a Search:
 // [Object Name].search(do you want to supress the output to the terminal?)
-// Example Rabin_Karp1.search(false);
+// Example Rabin_Karp1.search(true);
 // Operation: Will not spam the terminal with count and indexes. (useful when calculating average runtime)
 
 int main() {

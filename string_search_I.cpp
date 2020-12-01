@@ -18,7 +18,16 @@ Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool 
         this->inputString = processFile(inputString);
     }
 
+    countObjs();
 
+    this->tag = "Rabin-Karp " + std::to_string(Rabin_Karp::objCount);
+
+}
+
+int Rabin_Karp::objCount = 0; // initialize static variable to 0
+
+void Rabin_Karp::countObjs() {
+    objCount++;
 }
 
 std::string Rabin_Karp::getSearchWindow() {
@@ -58,15 +67,20 @@ long long Rabin_Karp::hash(std::string &stringToHash) { // find the hash of a st
     return hashVal;
 }
 
-void Rabin_Karp::output(std::string &searchString, std::list<int> &foundIndexes, int &count) {
+void Rabin_Karp::output(std::string &searchString, std::list<int> &foundIndexes, int &count, std::string &tag) {
+
+    std::cout << "----------------------------------------------------------------------------" << std::endl;
+    std::cout << "Search results for " << "\033[1;33m" << tag << "\033[0m:" << std::endl;
+    std::cout << std::endl;
+
     if (foundIndexes.empty()) {
-        std::cout << "The string " << "'" << searchString << "'" << " was not found." << std::endl;
+        std::cout << "The string " << "'\033[1;36m" << searchString << "\033[0m'" << " \033[1;31mwas not found\033[0m" << std::endl;
     } else if (foundIndexes.size() == 1) {
-        std::cout << "The string " << "'" << searchString << "'" << " was found at index " << foundIndexes.front() << "." << std::endl;
-        std::cout << "It was found " << count << " time." << std::endl;
+        std::cout << "The string " << "'\033[1;36m" << searchString << "\033[0m'" << " was found at index " << foundIndexes.front() << "." << std::endl;
+        std::cout << "It was found " << count << " time" << std::endl; //  1 time
     } else {
-        std::string outputIndexes = "The string '";
-        outputIndexes += searchString + "' was found at indexes ";
+        std::string outputIndexes = "The string '\033[1;36m";
+        outputIndexes += searchString + "\033[0m' was found at indexes ";
         for(std::list<int>::iterator i = foundIndexes.begin(); i != foundIndexes.end(); ++i) {
             if (*i == foundIndexes.back())  {
                 outputIndexes += "and " + std::to_string(*i);
@@ -75,7 +89,7 @@ void Rabin_Karp::output(std::string &searchString, std::list<int> &foundIndexes,
             }
         }
         std::cout << outputIndexes << std::endl;
-        std::cout << "It was found " << count << " times." << std::endl;
+        std::cout << "It was found \033[1;32m" << count << " \033[0mtimes" << std::endl;
     }
 
 }
@@ -85,7 +99,7 @@ void Rabin_Karp::findRunTime(auto &t_start) {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
     int t_out = duration;
     this-> t_out = t_out;
-    std::cout << "This Search Took "<< t_out<< " Microseconds" << std::endl;
+    std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds" << std::endl;
     std::cout << std::endl;
 }
 
@@ -116,14 +130,14 @@ void Rabin_Karp::search() { // performs the actual string search
         }
     }
 
-    output(searchString, foundIndexes, count);
+    output(searchString, foundIndexes, count, tag);
     findRunTime(t_start);
 
 
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
-//                                              | Booyer-Moore |
+//                                              | Boyer-Moore |
 //--------------------------------------------------------------------------------------------------------------------------------
 
 Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, bool isFile) { // constructor
@@ -135,16 +149,25 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
         this->inputString = processFile(inputString);
     }
 
+    countObjs();
+    this->tag = "Boyer-Moore " + std::to_string(Boyer_Moore::objCount);
+
     this->idx = searchString.length()-1; //set initial index (goes right to left)
 
+}
+
+int Boyer_Moore::objCount = 0; // initialize static variable to 0
+
+void Boyer_Moore::countObjs() {
+    objCount++;
 }
 
 std::string Boyer_Moore::processFile(std::string &filename) {
     return Rabin_Karp::processFile(filename); // calls the Rabin_Karp process file function (will be the same)
 }
 
-void Boyer_Moore::output(std::string &searchString, std::list<int> &foundIndexes, int &count) { // calls the Rabin_Karp output function (will be the same)
-    Rabin_Karp::output(searchString,foundIndexes,count);
+void Boyer_Moore::output(std::string &searchString, std::list<int> &foundIndexes, int &count, std::string &tag) { // calls the Rabin_Karp output function (will be the same)
+    Rabin_Karp::output(searchString,foundIndexes,count, tag);
 }
 
 void Boyer_Moore::findRunTime(auto &t_start) {
@@ -152,7 +175,7 @@ void Boyer_Moore::findRunTime(auto &t_start) {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
     int t_out = duration;
     this-> t_out = t_out;
-    std::cout << "This Search Took "<< t_out<< " Microseconds" << std::endl;
+    std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds";
     std::cout << std::endl;
 }
 
@@ -227,14 +250,13 @@ void Boyer_Moore::search() { // performs the actual string search
     int inputLength = inputString.length();
     if (inputLength < searchLength) { // check for error with input
         std::cout << "error with length of input" << std::endl;
-        exit(0);
     } else {
         while (idx < inputLength - searchLength) {
             idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength);
         }
     }
 
-    Boyer_Moore::output(searchString, foundIndexes, count);
+    Boyer_Moore::output(searchString, foundIndexes, count, tag);
     findRunTime(t_start);
 
 }

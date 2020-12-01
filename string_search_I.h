@@ -14,6 +14,7 @@ class Rabin_Karp {
         int t_out; // runtime duration
         std::string tag; // label of the object ex: "Rabin_Karp 1"
 
+
      public :
 
         // constructor
@@ -36,7 +37,7 @@ class Rabin_Karp {
 
         // object functions
         void findRunTime(auto &t_start);
-        void search(); //search the file or input string for the search string
+        void search(bool supressOutput); //search the file or input string for the search string
 };
 
 class Boyer_Moore {
@@ -68,7 +69,7 @@ class Boyer_Moore {
 
         //object functions
         void findRunTime(auto &t_start);
-        void search(); //search the file or input string for the search string
+        void search(bool surpressOutput); //search the file or input string for the search string
 };
 
 

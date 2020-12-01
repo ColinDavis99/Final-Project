@@ -100,7 +100,6 @@ void Rabin_Karp::findRunTime(auto &t_start) {
     int t_out = duration;
     this-> t_out = t_out;
     std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds" << std::endl;
-    std::cout << std::endl;
 }
 
 //Getters and Setters for Set time points
@@ -114,7 +113,7 @@ void Rabin_Karp::setRunTime(int t_out) {
 
 
 
-void Rabin_Karp::search() { // performs the actual string search
+void Rabin_Karp::search(bool supressOutput) { // performs the actual string search
     //StartRuntime Here
     auto t_start = std::chrono::high_resolution_clock::now();
     std::list<int> foundIndexes; // list of the indexes where the search string was found
@@ -130,9 +129,11 @@ void Rabin_Karp::search() { // performs the actual string search
         }
     }
 
-    output(searchString, foundIndexes, count, tag);
-    findRunTime(t_start);
+    if (!supressOutput) {
+        output(searchString, foundIndexes, count, tag);
+    }
 
+    findRunTime(t_start);
 
 }
 
@@ -151,8 +152,6 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
 
     countObjs();
     this->tag = "Boyer-Moore " + std::to_string(Boyer_Moore::objCount);
-
-    this->idx = searchString.length()-1; //set initial index (goes right to left)
 
 }
 
@@ -235,7 +234,10 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
 }
 
 
-void Boyer_Moore::search() { // performs the actual string search
+void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
+
+    idx = searchString.length()-1; //set initial index (goes right to left)
+
     // start calculating runtime
     auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
     std::list<int> foundIndexes; // list of the indexes where the search string was found
@@ -256,7 +258,10 @@ void Boyer_Moore::search() { // performs the actual string search
         }
     }
 
-    Boyer_Moore::output(searchString, foundIndexes, count, tag);
+    if (!supressOutput) {
+        output(searchString, foundIndexes, count, tag);
+    }
+
     findRunTime(t_start);
 
 }

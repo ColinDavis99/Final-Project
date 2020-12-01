@@ -21,5 +21,7 @@ int main() {
 
     Boyer_Moore Boyer_Moore2(fileName, searchString, true);
     Boyer_Moore2.search();
+    
+    
 
 }

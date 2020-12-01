@@ -166,8 +166,6 @@ void Boyer_Moore::setRunTime(int t_out) {
 }
 
 int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength) {
-    int shifts = 0;
-    idx += searchLength;
     if (searchIdx == 0) {
         if (searchString[0] == bad) {
             idx++;
@@ -175,8 +173,8 @@ int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchStr
             idx += searchLength-1;
         }
     } else {
+        int shifts = 0;
         for (int i = searchIdx-1; i >= 0; i--) {
-            std::cout << i << std::endl;
             shifts++;
             if (searchString[i] == bad) { // bad char found in searchString
                 idx += shifts;

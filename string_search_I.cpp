@@ -3,13 +3,15 @@
 #include <string>
 #include <sstream>
 #include <list>
-#include "string_search_I.h"
 #include <chrono>
+#include <algorithm>
+#include <cctype>
+#include "string_search_I.h"
 
 //--------------------------------------------------------------------------------------------------------------------------------
 //                                              | Rabin-Karp |
 //--------------------------------------------------------------------------------------------------------------------------------
-Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool isFile) { // constructor
+Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool isFile, bool isCaseSensitive) { // constructor
     this->inputString = inputString;
     this->searchString = searchString;
     this->isFile = isFile;
@@ -21,6 +23,11 @@ Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool 
     countObjs();
 
     this->tag = "Rabin-Karp " + std::to_string(Rabin_Karp::objCount);
+
+    if (!isCaseSensitive) {
+        std::transform(this->inputString.begin(), this->inputString.end(), this->inputString.begin(), [](unsigned char c) { return std::tolower(c);});
+        std::transform(this->searchString.begin(), this->searchString.end(), this->searchString.begin(), [](unsigned char c) { return std::tolower(c);});
+    }
 
 }
 
@@ -141,7 +148,7 @@ void Rabin_Karp::search(bool supressOutput) { // performs the actual string sear
 //                                              | Boyer-Moore |
 //--------------------------------------------------------------------------------------------------------------------------------
 
-Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, bool isFile) { // constructor
+Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, bool isFile, bool isCaseSensitive) { // constructor
     this->inputString = inputString;
     this->searchString = searchString;
     this->isFile = isFile;
@@ -152,6 +159,11 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
 
     countObjs();
     this->tag = "Boyer-Moore " + std::to_string(Boyer_Moore::objCount);
+
+    if (!isCaseSensitive) {
+        std::transform(this->inputString.begin(), this->inputString.end(), this->inputString.begin(), [](unsigned char c) { return std::tolower(c);});
+        std::transform(this->searchString.begin(), this->searchString.end(), this->searchString.begin(), [](unsigned char c) { return std::tolower(c);});
+    }
 
 }
 
@@ -188,6 +200,12 @@ void Boyer_Moore::setRunTime(int t_out) {
 }
 
 int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength) {
+
+    if (searchLength == 1) {
+        idx++;
+        return idx;
+    }
+
     if (searchIdx == 0) {
         if (searchString[0] == bad) {
             idx++;
@@ -224,8 +242,8 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
         } else if (stopper - searchLength == 0) { // on last iteration, if everything is a match
             foundIndexes.push_back(idx-searchLength+1);
             count++;
-            idx++; // shift over 1
-            break;
+            idx++;
+            return idx;
         }
         tempIdx--;
     }
@@ -254,7 +272,7 @@ void Boyer_Moore::search(bool supressOutput) { // performs the actual string sea
         std::cout << "error with length of input" << std::endl;
     } else {
         while (idx < inputLength - searchLength) {
-            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength);
+            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength); //shifts the index based on the bad character rule
         }
     }
 

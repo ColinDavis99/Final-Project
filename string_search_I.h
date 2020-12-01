@@ -18,7 +18,7 @@ class Rabin_Karp {
      public :
 
         // constructor
-        Rabin_Karp(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
+        Rabin_Karp(std::string inputString, std::string searchString, bool isFile, bool isCaseSensitive); // constructor for looking through a txt file
 
         // getters and setters
         std::string getSearchWindow();
@@ -51,7 +51,7 @@ class Boyer_Moore {
 
      public :
         //constructor
-        Boyer_Moore(std::string inputString, std::string searchString, bool isFile); // constructor for looking through a txt file
+        Boyer_Moore(std::string inputString, std::string searchString, bool isFile, bool isCaseSensitive); // constructor for looking through a txt file
 
         //getters and setters
         int getRunTime();

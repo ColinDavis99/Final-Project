@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <vector>
+#include <utility>
 
 class Rabin_Karp {
      private :
@@ -60,8 +62,8 @@ class Boyer_Moore {
         //static functions
         static std::string processFile(std::string &filename);
         static void output(std::string &searchString, std::list<int> &foundIndexes, int &count, std::string &tag);
-        static int badChar(int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength);
-        static int calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength);
+        static int badChar(int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength, std::vector<std::pair<char,int>> &badCharTable);
+        static void generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable);
         static void countObjs();
 
         // static variables

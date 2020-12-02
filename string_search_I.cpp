@@ -201,36 +201,7 @@ void Boyer_Moore::setRunTime(int t_out) {
     this->t_out = t_out;
 }
 
-int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength) {
-
-    if (searchLength == 1) { // bugfix for search length of 1 (when searching for character)
-        idx++;
-        return idx;
-    }
-
-    if (searchIdx == 0) { // bugfix for when bad character occurs at index 0 of searchString
-        if (searchString[0] == bad) {
-            idx++;
-        } else {
-            idx += searchLength-1;
-        }
-    } else {
-        int shifts = 0;
-        for (int i = searchIdx-1; i >= 0; i--) {
-            shifts++;
-            if (searchString[i] == bad) { // bad char found in searchString
-                idx += shifts;
-                break;
-            } else if (i == 0) { // bad char not found in searchString
-                idx += searchLength-1;
-            }
-        }
-    }
-
-    return idx;
-}
-
-int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength) {
+int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength, std::vector<std::pair<char,int>> &badCharTable) {
     int stopper = 0;
     int tempIdx = idx; // bad char index if applicable
     char bad;
@@ -240,6 +211,7 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
         if (inputString[tempIdx] != searchString[searchLength-stopper]) { // if bad character
             bad = inputString[tempIdx];
             searchIdx = searchLength - stopper;
+
             break;
         } else if (stopper - searchLength == 0) { // on last iteration, if everything is a match
             foundIndexes.push_back(idx-searchLength+1);
@@ -250,25 +222,21 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
         tempIdx--;
     }
 
-    return calulateShiftsBadChar(idx, bad, searchString, searchIdx, searchLength);
+    //If it reaches here that means it found a bad character
+
+    for (int i = 0; i < badCharTable.size(); i++) { // if bad character found in table look up its shift value and apply it
+        if (bad == badCharTable[i].first) {
+            idx += badCharTable[i].second;
+            return idx;
+        }
+    }
+    // if character not found in bad char table increase index by search string length
+    idx += searchLength;
+    return idx;
+
 }
 
-
-void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
-    // start calculating runtime
-    auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
-    idx = searchString.length()-1; //set initial index (goes right to left)
-    std::list<int> foundIndexes; // list of the indexes where the search string was found
-    int count = 0; // count the number of times searchString is found in inputString
-
-    int searchLength = searchString.length();
-    int inputLength = inputString.length();
-
-    // Preprocessing - Bad Character Table
-    // shift value = search length - index - 1 | repeats override
-    //"WELCOMETOONLINESCHOOL" -> "SCHOOL"
-    // need to account for 1 character
-    std::vector<std::pair<char,int>> badCharTable;
+void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable) {
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
         for (int j = 0; j < badCharTable.size(); j++) {
@@ -290,20 +258,34 @@ void Boyer_Moore::search(bool supressOutput) { // performs the actual string sea
             }
         }
     }
+}
 
+void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
+    // start calculating runtime
+    auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
+    idx = searchString.length()-1; //set initial index (goes right to left)
+    std::list<int> foundIndexes; // list of the indexes where the search string was found
+    int count = 0; // count the number of times searchString is found in inputString
 
-    for (int k = 0; k < badCharTable.size(); k++) {
-        std::cout << badCharTable[k].first << std::endl;
-        std::cout << badCharTable[k].second << std::endl;
-    }
+    int searchLength = searchString.length();
+    int inputLength = inputString.length();
 
+    // Preprocessing - Bad Character Table
+    // shift value = search length - index - 1 | repeats override
+    //  !!! need to account for 1 character
+    std::vector<std::pair<char,int>> badCharTable;
+    generateBadCharTable(searchLength, searchString, badCharTable);
 
     // Implementation of Algorithm
     if (inputLength < searchLength) { // check for error with input
         std::cout << "error with length of input" << std::endl;
     } else {
-        while (idx < inputLength - searchLength) {
-            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength); //shifts the index based on the bad character rule
+        while (idx < inputLength) {
+            if (idx > inputLength-1) {
+                std::cout << "ERROR: BOYER-MOORE" << std::endl;
+                exit(0);
+            }
+            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength, badCharTable); //shifts the index based on the bad character rule
         }
     }
 

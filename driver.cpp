@@ -15,6 +15,30 @@
 // Example Rabin_Karp1.search(true);
 // Operation: Will not spam the terminal with count and indexes. (useful when calculating average runtime)
 
+void getAverageRunTime(Boyer_Moore Boyer_Moore_Obj, int numTrials);
+
+void getAverageRunTime(Boyer_Moore Boyer_Moore_Obj, int numTrials) {
+
+    int mean = 0;
+    int i = 0;
+    Boyer_Moore_Obj.search(true);
+    int temptime = Boyer_Moore_Obj.getRunTime();
+    while (i != numTrials) {
+        Boyer_Moore_Obj.search(true);
+        if (temptime >= 1.3*Boyer_Moore_Obj.getRunTime() ){
+            getAverageRunTime(Boyer_Moore_Obj, numTrials);
+        }
+        if (Boyer_Moore_Obj.getRunTime() <= 1.3*temptime) {
+            mean += Boyer_Moore_Obj.getRunTime();
+            i++;
+        }
+
+    }
+    mean /= numTrials;
+
+    std::cout << "The mean runtime for " << Boyer_Moore_Obj.getTag() << " is " << mean << " microseconds" << std::endl;
+}
+
 int main() {
 
     //Rabin_Karp Rabin_Karp1("WELCOMETOONLINECOLLEGE", "COLLEGE", false, true);
@@ -24,20 +48,13 @@ int main() {
     //Boyer_Moore1.search(false); // runs the boyer_moore search algorith on the object
 
     Boyer_Moore Boyer_Moore2("blackhat2014.txt", "the", true, false);
-    Boyer_Moore2.search(true);
+    //Boyer_Moore2.search(true);
 
     Rabin_Karp Rabin_Karp2("blackhat2014.txt", "the", true, false);
-    Rabin_Karp2.search(true);
+    //Rabin_Karp2.search(true);
 
     //EXAMPLE: Calculates mean runtime for Boyer_Moore 2
-    //int mean = 0;
-    //for (int i = 0; i < 10; i++) {
-        //Boyer_Moore2.search(true);
-        //mean += Boyer_Moore2.getRunTime();
-    //}
-    //mean /= 10;
-    //std::cout << "The mean runtime for Boyer_Moore2 was " << mean << " microseconds" << std::endl;
-
+    getAverageRunTime(Boyer_Moore2, 10);
     // EXAMPLE: Calculates mean runtime for Rabin_Karp2
     //int mean2 = 0;
     //for (int i = 0; i < 10; i++) {

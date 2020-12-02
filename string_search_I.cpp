@@ -47,6 +47,14 @@ void Rabin_Karp::setSearchWindow(std::string &searchWindow) {
     this->searchWindow = searchWindow;
 }
 
+std::string Rabin_Karp::getTag() {
+    return tag;
+}
+
+void Rabin_Karp::setTag(std::string tag) {
+    this->tag = tag;
+}
+
 std::string Rabin_Karp::processFile(std::string &filename) { //converts inputString into the contents of the file and stores it back in inputString
     std::ifstream inFile;
 
@@ -174,6 +182,15 @@ int Boyer_Moore::objCount = 0; // initialize static variable to 0
 void Boyer_Moore::countObjs() {
     objCount++;
 }
+
+std::string Boyer_Moore::getTag() {
+    return tag;
+}
+
+void Boyer_Moore::setTag(std::string tag) {
+    this->tag = tag;
+}
+
 
 std::string Boyer_Moore::processFile(std::string &filename) {
     return Rabin_Karp::processFile(filename); // calls the Rabin_Karp process file function (will be the same)

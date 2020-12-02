@@ -27,6 +27,8 @@ class Rabin_Karp {
         void setSearchWindow(std::string &searchWindow);
         int getRunTime();
         void setRunTime(int t_out);
+        std::string getTag();
+        void setTag(std::string tag);
 
         // static functions
         static std::string processFile(std::string &filename);
@@ -58,6 +60,8 @@ class Boyer_Moore {
         //getters and setters
         int getRunTime();
         void setRunTime(int t_out);
+        std::string getTag();
+        void setTag(std::string tag);
 
         //static functions
         static std::string processFile(std::string &filename);

@@ -25,8 +25,9 @@ void getAverageRunTime(Boyer_Moore Boyer_Moore_Obj, int numTrials) {
     int temptime = Boyer_Moore_Obj.getRunTime();
     while (i != numTrials) {
         Boyer_Moore_Obj.search(true);
-        if (temptime >= 1.3*Boyer_Moore_Obj.getRunTime() ){
+        if (temptime >= Boyer_Moore_Obj.getRunTime()*1.3) { // This indicates a bad first test case, try again.
             getAverageRunTime(Boyer_Moore_Obj, numTrials);
+            return;
         }
         if (Boyer_Moore_Obj.getRunTime() <= 1.3*temptime) {
             mean += Boyer_Moore_Obj.getRunTime();
@@ -34,6 +35,7 @@ void getAverageRunTime(Boyer_Moore Boyer_Moore_Obj, int numTrials) {
         }
 
     }
+
     mean /= numTrials;
 
     std::cout << "The mean runtime for " << Boyer_Moore_Obj.getTag() << " is " << mean << " microseconds" << std::endl;
@@ -55,6 +57,7 @@ int main() {
 
     //EXAMPLE: Calculates mean runtime for Boyer_Moore 2
     getAverageRunTime(Boyer_Moore2, 10);
+
     // EXAMPLE: Calculates mean runtime for Rabin_Karp2
     //int mean2 = 0;
     //for (int i = 0; i < 10; i++) {

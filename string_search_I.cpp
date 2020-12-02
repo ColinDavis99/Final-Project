@@ -6,6 +6,8 @@
 #include <chrono>
 #include <algorithm>
 #include <cctype>
+#include <vector>
+#include <utility>
 #include "string_search_I.h"
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ Rabin_Karp::Rabin_Karp (std::string inputString, std::string searchString, bool 
 
     this->tag = "Rabin-Karp " + std::to_string(Rabin_Karp::objCount);
 
-    if (!isCaseSensitive) {
+    if (!isCaseSensitive) { // transform strings into all lowercase versions of themselves
         std::transform(this->inputString.begin(), this->inputString.end(), this->inputString.begin(), [](unsigned char c) { return std::tolower(c);});
         std::transform(this->searchString.begin(), this->searchString.end(), this->searchString.begin(), [](unsigned char c) { return std::tolower(c);});
     }
@@ -160,7 +162,7 @@ Boyer_Moore::Boyer_Moore (std::string inputString, std::string searchString, boo
     countObjs();
     this->tag = "Boyer-Moore " + std::to_string(Boyer_Moore::objCount);
 
-    if (!isCaseSensitive) {
+    if (!isCaseSensitive) { // transform strings into all lowercase versions of themselves
         std::transform(this->inputString.begin(), this->inputString.end(), this->inputString.begin(), [](unsigned char c) { return std::tolower(c);});
         std::transform(this->searchString.begin(), this->searchString.end(), this->searchString.begin(), [](unsigned char c) { return std::tolower(c);});
     }
@@ -201,12 +203,12 @@ void Boyer_Moore::setRunTime(int t_out) {
 
 int Boyer_Moore::calulateShiftsBadChar(int idx, char bad, std::string &searchString, int searchIdx, int searchLength) {
 
-    if (searchLength == 1) {
+    if (searchLength == 1) { // bugfix for search length of 1 (when searching for character)
         idx++;
         return idx;
     }
 
-    if (searchIdx == 0) {
+    if (searchIdx == 0) { // bugfix for when bad character occurs at index 0 of searchString
         if (searchString[0] == bad) {
             idx++;
         } else {
@@ -253,21 +255,50 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
 
 
 void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
-
-    idx = searchString.length()-1; //set initial index (goes right to left)
-
     // start calculating runtime
     auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
+    idx = searchString.length()-1; //set initial index (goes right to left)
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
-    // Preprocessing
-        // is where the lookup tables for boyer moore will be generated
-        // no idea how to do this yet.. all examples use like 5 characters not entire ASCII ????
-
-    // Implementation of Algorithm
     int searchLength = searchString.length();
     int inputLength = inputString.length();
+
+    // Preprocessing - Bad Character Table
+    // shift value = search length - index - 1 | repeats override
+    //"WELCOMETOONLINESCHOOL" -> "SCHOOL"
+    // need to account for 1 character
+    std::vector<std::pair<char,int>> badCharTable;
+    std::pair<char,int> tempPair;
+    for (int i = 0; i < searchLength; i++) {
+        for (int j = 0; j < badCharTable.size(); j++) {
+            if ((searchString[i] == badCharTable[j].first)) {
+                if (i != searchLength-1) { // correction for last character repeating
+                  badCharTable.pop_back();
+                }
+            }
+        }
+        tempPair.first = searchString[i];
+        tempPair.second = searchLength-i-1;
+        badCharTable.push_back(tempPair);
+        if (i == searchLength-1) { // last interation
+            badCharTable.pop_back();
+            for (int g = 0; g < badCharTable.size(); g++) {
+                if (badCharTable[g].first == searchString[i]) {
+                    badCharTable[g].second = searchLength;
+                }
+            }
+        }
+    }
+
+
+    for (int k = 0; k < badCharTable.size(); k++) {
+        std::cout << badCharTable[k].first << std::endl;
+        std::cout << badCharTable[k].second << std::endl;
+    }
+
+
+    // Implementation of Algorithm
     if (inputLength < searchLength) { // check for error with input
         std::cout << "error with length of input" << std::endl;
     } else {

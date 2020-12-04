@@ -60,35 +60,29 @@ MainWindow::MainWindow(QWidget *parent)
         Boyer_Moore Boyer_Moore2("901748048748219014748102983418475903274812803198474812489203975748124447448748", "748", false, false); // makes a boyer_moore object
         Boyer_Moore2.search(false); // runs the boyer_moore search algorith on the object
 
-        Rabin_Karp Rabin_Karp3("/$*#(@@*#(%*@@@)*@!$&^*&%^*@#^@@(%^*(@#%^&^@#$*^%#@#@@*(@@*(&*(&^_^*^*(^^(^~@^&*^$", "@@", false, false);
+        Rabin_Karp Rabin_Karp3("FYTF%8h8y98)hj*(Hh8yh&^F$%834WY*GGH789y&*zhO%8j8%8JuiF^$W#$@#$W34S%8rc^INlKNIOHJ8(7*()7UH45", "%8", false, false);
         Rabin_Karp3.search(false);
 
-        Boyer_Moore Boyer_Moore3("/$*#(@@*#(%*@@@)*@!$&^*&%^*@#^@@(%^*(@#%^&^@#$*^%#@#@@*(@@*(&*(&^_^*^*(^^(^~@^&*^$", "@@", false, false);
+        Boyer_Moore Boyer_Moore3("FYTF%8h8y98)hj*(Hh8yh&^F$%834WY*GGH789y&*zhO%8j8%8JuiF^$W#$@#$W34S%8rc^INlKNIOHJ8(7*()7UH45", "%8", false, false);
         Boyer_Moore3.search(false);
 
-        Rabin_Karp Rabin_Karp4("FYTF%8h8y98)hj*(Hh8yh&^F$%834WY*GGH789y&*zhO%8j8%8JuiF^$W#$@#$W34S%8rc^INlKNIOHJ8(7*()7UH45", "%8", false, false);
-        Rabin_Karp4.search(false);
+        Rabin_Karp Rabin_Karp4("beeScript.txt", "bee", true, true);
+        Rabin_Karp4.search(true);
 
-        Boyer_Moore Boyer_Moore4("FYTF%8h8y98)hj*(Hh8yh&^F$%834WY*GGH789y&*zhO%8j8%8JuiF^$W#$@#$W34S%8rc^INlKNIOHJ8(7*()7UH45", "%8", false, false);
-        Boyer_Moore4.search(false);
+        Boyer_Moore Boyer_Moore4("beeScript.txt", "bee", true, true);
+        Boyer_Moore4.search(true);
 
-        Rabin_Karp Rabin_Karp5("beeScript.txt", "bee", true, true);
+        Rabin_Karp Rabin_Karp5("1m.txt", "7", true, false);
         Rabin_Karp5.search(true);
 
-        Boyer_Moore Boyer_Moore5("beeScript.txt", "bee", true, true);
+        Boyer_Moore Boyer_Moore5("1m.txt", "7", true, false);
         Boyer_Moore5.search(true);
 
-        Rabin_Karp Rabin_Karp6("1m.txt", "7", true, false);
+        Rabin_Karp Rabin_Karp6("DNA_strand.txt", "gat", true, false);
         Rabin_Karp6.search(true);
 
-        Boyer_Moore Boyer_Moore6("1m.txt", "7", true, false);
+        Boyer_Moore Boyer_Moore6("DNA_strand.txt", "gat", true, false);
         Boyer_Moore6.search(true);
-
-        Rabin_Karp Rabin_Karp7("DNA_strand.txt", "gat", true, false);
-        Rabin_Karp7.search(true);
-
-        Boyer_Moore Boyer_Moore7("DNA_strand.txt", "gat", true, false);
-        Boyer_Moore7.search(true);
 
         //EXAMPLE: Calculates mean runtime for Boyer_Moore 2
         //getAverageRunTime(Boyer_Moore2, 10);

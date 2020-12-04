@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 #include <list>
+#include <ctime>
+#include <ratio>
 #include <chrono>
 #include <algorithm>
 #include <cctype>
@@ -111,20 +113,20 @@ void Rabin_Karp::output(std::string &searchString, std::list<int> &foundIndexes,
 
 }
 
-void Rabin_Karp::findRunTime(auto &t_start) {
-    auto t_finish = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
-    int t_out = duration;
+void Rabin_Karp::findRunTime(std::chrono::steady_clock::time_point &t_start) {
+    std::chrono::steady_clock::time_point t_finish = std::chrono::steady_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t_finish - t_start);
+    double t_out = time_span.count()*1000000; // convert to microseconds
     this-> t_out = t_out;
     std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds" << std::endl;
 }
 
 //Getters and Setters for Set time points
-int Rabin_Karp::getRunTime() {
+double Rabin_Karp::getRunTime() {
     return t_out;
 }
 
-void Rabin_Karp::setRunTime(int t_out) {
+void Rabin_Karp::setRunTime(double t_out) {
     this->t_out = t_out;
 }
 
@@ -132,7 +134,7 @@ void Rabin_Karp::setRunTime(int t_out) {
 
 void Rabin_Karp::search(bool supressOutput) { // performs the actual string search
     //StartRuntime Here
-    auto t_start = std::chrono::high_resolution_clock::now();
+    std::chrono::steady_clock::time_point t_start = std::chrono::steady_clock::now();
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString
 
@@ -200,21 +202,20 @@ void Boyer_Moore::output(std::string &searchString, std::list<int> &foundIndexes
     Rabin_Karp::output(searchString,foundIndexes,count, tag);
 }
 
-void Boyer_Moore::findRunTime(auto &t_start) {
-    auto t_finish = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t_finish - t_start ).count();
-    int t_out = duration;
+void Boyer_Moore::findRunTime(std::chrono::steady_clock::time_point &t_start) {
+    std::chrono::steady_clock::time_point t_finish = std::chrono::steady_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t_finish - t_start);
+    double t_out = time_span.count()*1000000; // convert to microseconds
     this-> t_out = t_out;
-    std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds";
-    std::cout << std::endl;
+    std::cout << "This search took \033[1;35m"<< t_out<< " \033[0mmicroseconds" << std::endl;
 }
 
 
-int Boyer_Moore::getRunTime() {
+double Boyer_Moore::getRunTime() {
     return t_out;
 }
 
-void Boyer_Moore::setRunTime(int t_out) {
+void Boyer_Moore::setRunTime(double t_out) {
     this->t_out = t_out;
 }
 
@@ -279,7 +280,7 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
 
 void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
     // start calculating runtime
-    auto t_start = std::chrono::high_resolution_clock::now(); // start recording runtime
+    std::chrono::steady_clock::time_point t_start = std::chrono::steady_clock::now(); // start finding runtime
     idx = searchString.length()-1; //set initial index (goes right to left)
     std::list<int> foundIndexes; // list of the indexes where the search string was found
     int count = 0; // count the number of times searchString is found in inputString

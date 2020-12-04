@@ -1,11 +1,12 @@
-#ifndef __STRING_SEARCH_I_H__
-#define __STRING_SEARCH_I_H__
+#ifndef STRING_SEARCH_I_H
+#define STRING_SEARCH_I_H
 
 #include <fstream>
 #include <string>
 #include <list>
 #include <vector>
 #include <utility>
+#include <chrono>
 
 class Rabin_Karp {
      private :
@@ -13,7 +14,7 @@ class Rabin_Karp {
         std::string searchString; //string you are searching for
         bool isFile; // determines if string describes the name of a file or just a search string
         std::string searchWindow;
-        int t_out; // runtime duration
+        double t_out; // runtime duration
         std::string tag; // label of the object ex: "Rabin_Karp 1"
 
 
@@ -25,8 +26,8 @@ class Rabin_Karp {
         // getters and setters
         std::string getSearchWindow();
         void setSearchWindow(std::string &searchWindow);
-        int getRunTime();
-        void setRunTime(int t_out);
+        double getRunTime();
+        void setRunTime(double t_out);
         std::string getTag();
         void setTag(std::string tag);
 
@@ -40,7 +41,7 @@ class Rabin_Karp {
         static int objCount;
 
         // object functions
-        void findRunTime(auto &t_start);
+        void findRunTime(std::chrono::steady_clock::time_point &t_start);
         void search(bool supressOutput); //search the file or input string for the search string
 };
 
@@ -49,7 +50,7 @@ class Boyer_Moore {
         std::string inputString; // can be filename or string
         std::string searchString; //string you are searching for
         bool isFile; // determines if string describes the name of a file or just a search string
-        int t_out; // runtime duration
+        double t_out; // runtime duration
         int idx;
         std::string tag; // label of the object ex: "Boyer_Moore 1"
 
@@ -58,8 +59,8 @@ class Boyer_Moore {
         Boyer_Moore(std::string inputString, std::string searchString, bool isFile, bool isCaseSensitive); // constructor for looking through a txt file
 
         //getters and setters
-        int getRunTime();
-        void setRunTime(int t_out);
+        double getRunTime();
+        void setRunTime(double t_out);
         std::string getTag();
         void setTag(std::string tag);
 
@@ -74,14 +75,9 @@ class Boyer_Moore {
         static int objCount;
 
         //object functions
-        void findRunTime(auto &t_start);
+        void findRunTime(std::chrono::steady_clock::time_point &t_start);
         void search(bool surpressOutput); //search the file or input string for the search string
 };
 
 
-#endif
-
-// searchString = "TEST"
-// inputString = "2-934-290382-034TEST3498-23894-2"
-//
-// result "Appears at index 16"
+#endif // STRING_SEARCH_I_H

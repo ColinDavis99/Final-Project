@@ -14,9 +14,8 @@ SOURCES += \
     string_search_I.cpp
 
 HEADERS += \
-    ../../Downloads/string_search_I (2).h \
     mainwindow.h \
-    string_search_I.h
+    string_search_I.h \
 
 FORMS += \
     mainwindow.ui
@@ -27,3 +26,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+RESOURCES += \
+    resource.qrc

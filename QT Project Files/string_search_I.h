@@ -17,6 +17,7 @@ class Rabin_Karp {
         double t_out; // runtime duration
         std::string tag; // label of the object ex: "Rabin_Karp 1"
         int occurrences;
+        std::string hashToGUI; // hash of the search string for output to GUI
 
 
      public :
@@ -33,6 +34,8 @@ class Rabin_Karp {
         void setTag(std::string tag);
         int getOccurrences();
         void setOccurrences(int occurrences);
+        std::string getHash();
+        void setHash(std::string hashVal);
 
         // static functions
         static std::string processFile(std::string &filename);
@@ -60,6 +63,7 @@ class Boyer_Moore {
         int idx;
         std::string tag; // label of the object ex: "Boyer_Moore 1"
         int occurrences;
+        std::string badCharTableHTML;
 
      public :
         //constructor
@@ -72,6 +76,8 @@ class Boyer_Moore {
         void setTag(std::string tag);
         int getOccurrences();
         void setOccurrences(int occurrences);
+        std::string getBadCharTableHTML();
+        void setBadCharTableHTML(std::string badCharTableHTML);
 
         //static functions
         static std::string processFile(std::string &filename);

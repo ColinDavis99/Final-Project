@@ -117,6 +117,9 @@ MainWindow::~MainWindow() {
 }
 
 
+Boyer_Moore* Boyer_Moore1;
+Rabin_Karp* Rabin_Karp1;
+
 void MainWindow::on_pushButton_clicked() { // run search button
     std::string getSearch = ui->lineEdit->text().toStdString(); // gets search from textbox
     std::string getSource; // gets source (what you are searching through) from textbox
@@ -141,9 +144,6 @@ void MainWindow::on_pushButton_clicked() { // run search button
         }
         return;
     }
-
-    Boyer_Moore* Boyer_Moore1;
-    Rabin_Karp* Rabin_Karp1;
 
     if (isBoyerMoore) {
             Boyer_Moore1 = new Boyer_Moore(getSource, getSearch, false, caseSensitive);
@@ -177,7 +177,10 @@ void MainWindow::on_pushButton_clicked() { // run search button
         }
         runtimeLabel += runtime;
         runtimeLabel += " microseconds";
-        ui->label_8->setText(QString::fromStdString(runtimeLabel));
+        ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
+
+        ui->label_9->setText(QString::fromStdString(Boyer_Moore1->getBadCharTableHTML())); // set HTMl table
+
     } else {
         occurencesLabel += QString::number(Rabin_Karp1->getOccurrences());
         if (Rabin_Karp1->getOccurrences() == 1) {
@@ -195,6 +198,12 @@ void MainWindow::on_pushButton_clicked() { // run search button
         runtimeLabel += runtime;
         runtimeLabel += " microseconds";
         ui->label_8->setText(QString::fromStdString(runtimeLabel));
+
+        QString searchHash = "The hash of ";
+        searchHash += ui->lineEdit->text();
+        searchHash += " is: ";
+        searchHash += QString::fromStdString(Rabin_Karp1->getHash());
+        ui->label_9->setText(searchHash); // set search string hash for Rabin-Karp
     }
 
 }

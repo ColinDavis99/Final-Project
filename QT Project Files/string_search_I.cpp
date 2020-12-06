@@ -64,6 +64,14 @@ void Rabin_Karp::setOccurrences(int occurrences) {
     this->occurrences = occurrences;
 }
 
+std::string Rabin_Karp::getHash() {
+    return this->hashToGUI;
+}
+
+void Rabin_Karp::setHash(std::string hashVal) {
+    this->hashToGUI = hashVal;
+}
+
 std::string Rabin_Karp::processFile(std::string &filename) { //converts inputString into the contents of the file and stores it back in inputString
     std::ifstream inFile;
 
@@ -146,6 +154,7 @@ void Rabin_Karp::search(bool supressOutput) { // performs the actual string sear
     int count = 0; // count the number of times searchString is found in inputString
 
     long long searchHash = hash(searchString);
+    hashToGUI = std::to_string(searchHash); // set object variable for output to gui
     int searchStringLength = searchString.length();
     for (int i = 0; i + searchStringLength - 1 < inputString.length(); i++) { // goes until the length of the string is smaller than a search window
         searchWindow = inputString.substr(i, searchStringLength);
@@ -156,18 +165,17 @@ void Rabin_Karp::search(bool supressOutput) { // performs the actual string sear
     }
 
     occurrences = count;
+    findRunTime(t_start);
 
     if (!supressOutput) {
         output(searchString, foundIndexes, count, tag);
     }
 
-    findRunTime(t_start);
-
 }
 
 // Destructor
 Rabin_Karp::~Rabin_Karp() {
-    //write destructor
+    delete this; // delete whole object
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -213,6 +221,14 @@ int Boyer_Moore::getOccurrences() {
 
 void Boyer_Moore::setOccurrences(int occurrences) {
     this->occurrences = occurrences;
+}
+
+std::string Boyer_Moore::getBadCharTableHTML() {
+    return badCharTableHTML;
+}
+
+void Boyer_Moore::setBadCharTableHTML(std::string badCharTableHTML) {
+    this->badCharTableHTML = badCharTableHTML;
 }
 
 std::string Boyer_Moore::processFile(std::string &filename) {
@@ -269,34 +285,41 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
             return idx;
         }
     }
-    // if character not found in bad char table increase index by search string length
+    // if character not found in bad char table increase index by search string length. This is the "OTHER" part of the table
     idx += searchLength;
     return idx;
 
 }
 
 void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable) {
+    char markedChar = '*';
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
-        for (int j = 0; j < badCharTable.size(); j++) {
-            if ((searchString[i] == badCharTable[j].first)) {
-                if (i != searchLength-1) { // correction for last character repeating
-                  badCharTable.pop_back();
-                }
-            }
-        }
         tempPair.first = searchString[i];
         tempPair.second = searchLength-i-1;
         badCharTable.push_back(tempPair);
-        if (i == searchLength-1) { // last interation
-            badCharTable.pop_back();
-            for (int g = 0; g < badCharTable.size(); g++) {
-                if (badCharTable[g].first == searchString[i]) {
-                    badCharTable[g].second = searchLength;
-                }
+        for (int j = i; j >= 0; j--) {
+            if ((tempPair.first == badCharTable[j].first) && (i != j)) {
+                  badCharTable[j].second = tempPair.second; // override duplicates
+                  badCharTable[j].first = markedChar;
+                  break;
             }
         }
     }
+
+    for (int k = 0; k < badCharTable.size(); k++) { //mark character
+        if (badCharTable[k].first == markedChar) {
+            badCharTable.erase(badCharTable.begin()+k);
+            k--;
+        }
+        if (searchString[searchLength-1] == badCharTable[k].first) {
+            badCharTable[k].second = searchLength;
+        }
+    }
+
+    //badCharTable.back().second = 1;
+
+
 }
 
 void Boyer_Moore::search(bool supressOutput) { // performs the actual string search
@@ -311,33 +334,51 @@ void Boyer_Moore::search(bool supressOutput) { // performs the actual string sea
 
     // Preprocessing - Bad Character Table
     // shift value = search length - index - 1 | repeats override
-    //  !!! need to account for 1 character
     std::vector<std::pair<char,int>> badCharTable;
     generateBadCharTable(searchLength, searchString, badCharTable);
 
     // Implementation of Algorithm
-    if (inputLength < searchLength) { // check for error with input
-        std::cout << "error with length of input" << std::endl;
-    } else {
-        while (idx < inputLength) {
-            if (idx > inputLength-1) {
-                std::cout << "ERROR: BOYER-MOORE" << std::endl;
-                exit(0);
-            }
-            idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength, badCharTable); //shifts the index based on the bad character rule
+    while (idx < inputLength) {
+        if (idx > inputLength-1) {
+            std::cout << "ERROR: BOYER-MOORE" << std::endl;
+            exit(0);
         }
+        idx = badChar(idx, inputString, searchString, foundIndexes, count, searchLength, badCharTable); //shifts the index based on the bad character rule
     }
 
-    occurrences = count;
-
-    if (!supressOutput) {
-        output(searchString, foundIndexes, count, tag);
-    }
+    occurrences = count; // set object variable for output to gui
 
     findRunTime(t_start);
+
+    //FUNCTIONAL PART OF ALGORITHM ENDS HERE. RUNTIME IS NO LONGER RECORDED
+
+    //Generate html for QT Label
+    badCharTableHTML = "<style>table,th,td{border: 1px solid black;}th, td { padding: 10px;}</style><table border=\"1\"style=\"width:100%\"><caption>Boyer-Moore Bad Character Table</caption><tr>";
+    std::string tempHTML;
+    for (int k = 0; k < badCharTable.size(); k++) { // character
+        tempHTML += "<td>";
+        tempHTML += badCharTable[k].first;
+        tempHTML += "</td>";
+    }
+    tempHTML += "<td>OTHER</td></tr><tr>";
+    badCharTableHTML += tempHTML;
+    tempHTML = "";
+    for (int k = 0; k < badCharTable.size(); k++) { // character
+        tempHTML += "<td>";
+        tempHTML += std::to_string(badCharTable[k].second);
+        tempHTML += "</td>";
+    }
+    tempHTML += "<td>";
+    tempHTML += std::to_string(searchLength);
+    tempHTML += "</td></tr></table>";
+    badCharTableHTML += tempHTML;
+
+    if (!supressOutput) { // output log to terminal
+        output(searchString, foundIndexes, count, tag);
+    }
 
 }
 
 Boyer_Moore::~Boyer_Moore() {
- //write destructor
+    delete this; // delete whole object
 }

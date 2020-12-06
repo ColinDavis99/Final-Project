@@ -175,8 +175,15 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        runtimeLabel += runtime;
+        if (std::stod(runtime) > 10000){
+            runtime=std::to_string(std::stod(runtime)/1000000);
+            runtimeLabel += runtime;
+            runtimeLabel += " Seconds";
+        }
+        else {
+            runtimeLabel += runtime;
         runtimeLabel += " microseconds";
+        }
         ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
 
         ui->label_9->setText(QString::fromStdString(Boyer_Moore1->getBadCharTableHTML())); // set HTMl table
@@ -195,8 +202,15 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        runtimeLabel += runtime;
+        if (std::stod(runtime) > 10000){
+            runtime=std::to_string(std::stod(runtime)/1000000);
+            runtimeLabel += runtime;
+            runtimeLabel += " Seconds";
+        }
+        else {
+            runtimeLabel += runtime;
         runtimeLabel += " microseconds";
+        }
         ui->label_8->setText(QString::fromStdString(runtimeLabel));
 
         QString searchHash = "The hash of ";
@@ -229,19 +243,28 @@ void MainWindow::on_radioButton_2_clicked() { // Boyer-Moore selector
     isRabinKarp = false;
 }
 
+QString file_name = "default";
 void MainWindow::on_pushButton_2_clicked() { // Choose file button
-    QString file_name = QFileDialog::getOpenFileName(this, "Choose a file", "C://");\
-    QFile file(file_name);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::about(this, "Error with file", "File was not open");
+    if (file_name.compare("default") == 0) { // if theres no file selected yet
+        file_name = QFileDialog::getOpenFileName(this, "Choose a file", "C://");\
+        QFile file(file_name);
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::about(this, "Error with file", "File was not open");
+        }
+        usingFile = true;
+        ui->label_6->setText(file_name); // set file name label
+        QTextStream in(&file);
+        QString contents = in.readAll();
+        file.close();
+        fileString = contents.toStdString(); //QString to std::string
+        isFileReady = true;
+        ui->pushButton_2->setText("Remove File");
+    } else {
+        usingFile = false;
+        ui->pushButton_2->setText("Choose File");
+        ui->label_6->setText("Ex: file.txt");
+        file_name = "default";
     }
-    usingFile = true;
-    ui->label_6->setText(file_name);
-    QTextStream in(&file);
-    QString contents = in.readAll();
-    file.close();
-    fileString = contents.toStdString(); //QString to std::string
-    isFileReady = true;
 }
 
 void MainWindow::on_checkBox_2_stateChanged(int arg1) { // supress log output

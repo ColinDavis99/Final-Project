@@ -18,7 +18,7 @@ HEADERS += \
     mainwindow.h \
     qcustomplot.h \
     string_search_I.h \
-
+    
 FORMS += \
     mainwindow.ui
 

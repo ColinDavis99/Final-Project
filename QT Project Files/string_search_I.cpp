@@ -317,8 +317,6 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
         }
     }
 
-    //badCharTable.back().second = 1;
-
 
 }
 

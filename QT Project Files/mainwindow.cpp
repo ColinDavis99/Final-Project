@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->stackedWidget->setCurrentIndex(0); // set to the main page by default
 
     //Rabin_Karp Rabin_Karp1("WELCOMETOONLINECOLLEGE", "COLLEGE", false, true);
         //Rabin_Karp1.search(false);
@@ -100,6 +101,83 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+//GRAPHING
+
+QVector <double> RKsizes, BMsizes, RKruntimes, BMruntimes;
+int timesRun = 0;
+
+void MainWindow::makePlot() {
+
+    timesRun++;
+
+    if (timesRun > 0) {
+       ui->customPlot->removeGraph(0);
+       ui->customPlot->removeGraph(1);
+    }
+
+    // add two new graphs and set their look:
+    ui->customPlot->addGraph();
+    ui->customPlot->graph(0)->setPen(QPen(Qt::darkGreen)); // line color blue for first graph
+    ui->customPlot->addGraph();
+    ui->customPlot->graph(1)->setPen(QPen(Qt::red)); // line color red for second graph
+    ui->customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlot->graph(1)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, Qt::darkGreen, Qt::darkGreen, 7));
+    ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, Qt::red, Qt::red, 7));
+    ui->customPlot->xAxis->setLabel("Number of characters searched");
+    ui->customPlot->yAxis->setLabel("Runtime in microseconds");
+    //set names of graphs
+    ui->customPlot->graph(0)->setName("Rabin-Karp");
+    ui->customPlot->graph(1)->setName("Boyer-Moore");
+
+    QFont pfont("Newyork",14);
+    pfont.setStyleHint(QFont::SansSerif);
+    pfont.setPointSize(14);
+
+    ui->customPlot->xAxis->setLabelFont(pfont);
+    ui->customPlot->yAxis->setLabelFont(pfont);
+
+    if (timesRun > 0) {
+        // adding legend display
+        ui->customPlot->legend->setVisible(true);
+        QFont legendFont = font();  // start out with MainWindow's font..
+        legendFont.setPointSize(9); // and make a bit smaller for legend
+        ui->customPlot->legend->setFont(legendFont);
+        ui->customPlot->legend->setBrush(QBrush(QColor(255,255,255,230)));
+        ui->customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+    }
+
+    // configure right and top axis to show ticks but no labels:
+    // (see QCPAxisRect::setupFullAxesBox for a quicker method to do this)
+    ui->customPlot->xAxis2->setVisible(true);
+    ui->customPlot->xAxis2->setTickLabels(false);
+    ui->customPlot->yAxis2->setVisible(true);
+    ui->customPlot->yAxis2->setTickLabels(false);
+
+    // make left and bottom axes always transfer their ranges to right and top axes:
+    connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+    // pass data points to graphs:
+    ui->customPlot->graph(0)->setData(RKsizes, RKruntimes);
+    ui->customPlot->graph(1)->setData(BMsizes, BMruntimes);
+
+    // let the ranges scale themselves so graph 0 fits perfectly in the visible area:
+    ui->customPlot->graph(0)->rescaleAxes();
+
+    // same thing for graph 1, but only enlarge ranges (in case graph 1 is smaller than graph 0):
+    ui->customPlot->graph(1)->rescaleAxes(true);
+
+    // Note: we could have also just called ui->customPlot->rescaleAxes(); instead
+
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+
+    ui->customPlot->replot();
+
+}
+
+
 // FORMATTING:
 
 
@@ -117,14 +195,11 @@ MainWindow::~MainWindow() {
 }
 
 
-Boyer_Moore* Boyer_Moore1;
-Rabin_Karp* Rabin_Karp1;
-
 void MainWindow::on_pushButton_clicked() { // run search button
     std::string getSearch = ui->lineEdit->text().toStdString(); // gets search from textbox
     std::string getSource; // gets source (what you are searching through) from textbox
     if (usingFile) {
-        getSource = fileString;
+       getSource = fileString;
     } else {
        getSource = ui->lineEdit_2->text().toStdString(); // gets source (what you are searching through) from textbox
     }
@@ -144,6 +219,9 @@ void MainWindow::on_pushButton_clicked() { // run search button
         }
         return;
     }
+
+    Boyer_Moore* Boyer_Moore1;
+    Rabin_Karp* Rabin_Karp1;
 
     if (isBoyerMoore) {
             Boyer_Moore1 = new Boyer_Moore(getSource, getSearch, false, caseSensitive);
@@ -175,18 +253,14 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        if (std::stod(runtime) > 10000){
-            runtime=std::to_string(std::stod(runtime)/1000000);
-            runtimeLabel += runtime;
-            runtimeLabel += " Seconds";
-        }
-        else {
-            runtimeLabel += runtime;
+        runtimeLabel += runtime;
         runtimeLabel += " microseconds";
-        }
         ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
 
         ui->label_9->setText(QString::fromStdString(Boyer_Moore1->getBadCharTableHTML())); // set HTMl table
+
+        BMsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
+        BMruntimes.push_back(Boyer_Moore1->getRunTime());
 
     } else {
         occurencesLabel += QString::number(Rabin_Karp1->getOccurrences());
@@ -202,15 +276,8 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        if (std::stod(runtime) > 10000){
-            runtime=std::to_string(std::stod(runtime)/1000000);
-            runtimeLabel += runtime;
-            runtimeLabel += " Seconds";
-        }
-        else {
-            runtimeLabel += runtime;
+        runtimeLabel += runtime;
         runtimeLabel += " microseconds";
-        }
         ui->label_8->setText(QString::fromStdString(runtimeLabel));
 
         QString searchHash = "The hash of ";
@@ -218,7 +285,12 @@ void MainWindow::on_pushButton_clicked() { // run search button
         searchHash += " is: ";
         searchHash += QString::fromStdString(Rabin_Karp1->getHash());
         ui->label_9->setText(searchHash); // set search string hash for Rabin-Karp
+
+        RKsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
+        RKruntimes.push_back(Rabin_Karp1->getRunTime());
     }
+
+    MainWindow::makePlot(); // graph results
 
 }
 
@@ -273,4 +345,12 @@ void MainWindow::on_checkBox_2_stateChanged(int arg1) { // supress log output
     } else {
         supressOutput = true;
     }
+}
+
+void MainWindow::on_pushButton_3_clicked() { // Graph results button
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButton_4_clicked() { // go back to main window from graphing window
+    ui->stackedWidget->setCurrentIndex(0);
 }

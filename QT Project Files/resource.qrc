@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/img">
         <file>img/Binary_background.gif</file>
+        <file>img/cpu.jpg</file>
     </qresource>
 </RCC>

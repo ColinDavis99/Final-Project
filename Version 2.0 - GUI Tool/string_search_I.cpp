@@ -260,13 +260,14 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
     int stopper = 0;
     int tempIdx = idx; // bad char index if applicable
     char bad;
-    int searchIdx; // index of search that matches where the bad char occurs
     while (stopper - searchLength != 0) {
         stopper++;
         if (inputString[tempIdx] != searchString[searchLength-stopper]) { // if bad character
             bad = inputString[tempIdx];
-            searchIdx = searchLength - stopper;
-
+            if (inputString[idx+1] == searchString[searchLength-1]) { // bugfix for repeating patterns
+                idx++;
+                return idx;
+            }
             break;
         } else if (stopper - searchLength == 0) { // on last iteration, if everything is a match
             foundIndexes.push_back(idx-searchLength+1);
@@ -274,6 +275,7 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
             idx++;
             return idx;
         }
+
         tempIdx--;
     }
 
@@ -292,6 +294,10 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
 }
 
 void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable) {
+    // shift value = search length - index - 1 | repeats override
+    // markedChar == getRandomChar
+    // if (markedChar is in searchstring)
+    // markedChar == getRandomChar
     char markedChar = '*';
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
@@ -312,8 +318,8 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
             badCharTable.erase(badCharTable.begin()+k);
             k--;
         }
-        if (searchString[searchLength-1] == badCharTable[k].first) {
-            badCharTable[k].second = searchLength;
+        if (badCharTable[k].second == 0) { // Max (1,0)
+            badCharTable[k].second = 1;
         }
     }
 
@@ -331,7 +337,6 @@ void Boyer_Moore::search(bool supressOutput) { // performs the actual string sea
     int inputLength = inputString.length();
 
     // Preprocessing - Bad Character Table
-    // shift value = search length - index - 1 | repeats override
     std::vector<std::pair<char,int>> badCharTable;
     generateBadCharTable(searchLength, searchString, badCharTable);
 

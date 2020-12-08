@@ -187,6 +187,7 @@ bool isBoyerMoore = false;
 bool usingFile = false;
 bool supressOutput = false;
 bool isFileReady = false;
+std::string lastSearch;
 std::string fileString;
 
 MainWindow::~MainWindow() {
@@ -240,6 +241,7 @@ void MainWindow::on_pushButton_clicked() { // run search button
     std::string runtime;
 
     if (isBoyerMoore) {
+        lastSearch = "BM";
         occurencesLabel += QString::number(Boyer_Moore1->getOccurrences());
         if (Boyer_Moore1->getOccurrences() == 1) {
             occurencesLabel += " time";
@@ -253,8 +255,17 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        runtimeLabel += runtime;
-        runtimeLabel += " microseconds";
+
+        //converts microseconds to seconds for large values of runtimes
+        if (std::stod(runtime) > 10000){
+            runtime=std::to_string(std::stod(runtime)/1000000);
+            runtimeLabel += runtime;
+            runtimeLabel += " Seconds";
+        } else {
+            runtimeLabel += runtime;
+            runtimeLabel += " microseconds";
+        }
+
         ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
 
         ui->label_9->setText(QString::fromStdString(Boyer_Moore1->getBadCharTableHTML())); // set HTMl table
@@ -263,6 +274,7 @@ void MainWindow::on_pushButton_clicked() { // run search button
         BMruntimes.push_back(Boyer_Moore1->getRunTime());
 
     } else {
+        lastSearch = "RK";
         occurencesLabel += QString::number(Rabin_Karp1->getOccurrences());
         if (Rabin_Karp1->getOccurrences() == 1) {
             occurencesLabel += " time";
@@ -276,9 +288,18 @@ void MainWindow::on_pushButton_clicked() { // run search button
         if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
             runtime += '0';
         }
-        runtimeLabel += runtime;
-        runtimeLabel += " microseconds";
-        ui->label_8->setText(QString::fromStdString(runtimeLabel));
+
+        //converts microseconds to seconds for large values of runtimes
+        if (std::stod(runtime) > 10000){
+            runtime=std::to_string(std::stod(runtime)/1000000);
+            runtimeLabel += runtime;
+            runtimeLabel += " Seconds";
+        } else {
+            runtimeLabel += runtime;
+            runtimeLabel += " microseconds";
+        }
+
+        ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
 
         QString searchHash = "The hash of ";
         searchHash += ui->lineEdit->text();
@@ -353,4 +374,26 @@ void MainWindow::on_pushButton_3_clicked() { // Graph results button
 
 void MainWindow::on_pushButton_4_clicked() { // go back to main window from graphing window
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_pushButton_5_clicked() { // remove last search button
+
+    if (lastSearch.compare("BM") == 0) {
+        if (BMsizes.size() == 0) { // if its zero dont do it or it will cause a crash
+            QMessageBox::about(this, "Remove Error", "The amount of Boyer-Moore searches is currently 0");
+        } else {
+            BMsizes.pop_back();
+            BMruntimes.pop_back();
+            makePlot();
+        }
+    } else if (lastSearch.compare("RK") == 0) {
+        if (RKsizes.size() == 0) {
+            QMessageBox::about(this, "Remove Error", "The amount of Rabin-Karp searches is currently 0");
+        } else {
+            RKsizes.pop_back();
+            RKruntimes.pop_back();
+            makePlot();
+        }
+    }
+
 }

@@ -255,27 +255,35 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
 }
 
 void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable) {
+
+
+    // shift value = search length - index - 1 | repeats override
+    char markedChar = '*';
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
-        for (int j = 0; j < badCharTable.size(); j++) {
-            if ((searchString[i] == badCharTable[j].first)) {
-                if (i != searchLength-1) { // correction for last character repeating
-                  badCharTable.pop_back();
-                }
-            }
-        }
         tempPair.first = searchString[i];
         tempPair.second = searchLength-i-1;
         badCharTable.push_back(tempPair);
-        if (i == searchLength-1) { // last interation
-            badCharTable.pop_back();
-            for (int g = 0; g < badCharTable.size(); g++) {
-                if (badCharTable[g].first == searchString[i]) {
-                    badCharTable[g].second = searchLength;
-                }
+        for (int j = i; j >= 0; j--) {
+            if ((tempPair.first == badCharTable[j].first) && (i != j)) {
+                  badCharTable[j].second = tempPair.second; // override duplicates
+                  badCharTable[j].first = markedChar;
+                  break;
             }
         }
     }
+
+    for (int k = 0; k < badCharTable.size(); k++) { //mark character
+        if (badCharTable[k].first == markedChar) {
+            badCharTable.erase(badCharTable.begin()+k);
+            k--;
+        }
+        if (badCharTable[k].second == 0) { // Max (1,0)
+            badCharTable[k].second = 1;
+        }
+    }
+
+
 }
 
 void Boyer_Moore::search(bool supressOutput) { // performs the actual string search

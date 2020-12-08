@@ -306,8 +306,6 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
         }
     }
 
-    std::cout << markedChar << std::endl;
-
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
         tempPair.first = searchString[i];

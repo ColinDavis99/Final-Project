@@ -313,6 +313,12 @@ void MainWindow::on_pushButton_clicked() { // run search button
 
     MainWindow::makePlot(); // graph results
 
+    if (isBoyerMoore) {
+        delete Boyer_Moore1;
+    } else if (isRabinKarp) {
+        delete Rabin_Karp1;
+    }
+
 }
 
 void MainWindow::on_checkBox_stateChanged(int arg1) {

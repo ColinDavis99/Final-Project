@@ -293,12 +293,21 @@ int Boyer_Moore::badChar (int idx, std::string &inputString, std::string searchS
 
 }
 
+char Boyer_Moore::randChar() {
+    return rand() % 94 + 32;
+}
+
 void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable) {
-    // shift value = search length - index - 1 | repeats override
-    // markedChar == getRandomChar
-    // if (markedChar is in searchstring)
-    // markedChar == getRandomChar
-    char markedChar = '*';
+
+    char markedChar = randChar();
+    for (int n = 0; n < searchLength; n++) {
+        while (markedChar == searchString[n]) { // problem because random char is in search string, pick a new random
+            markedChar = randChar();
+        }
+    }
+
+    std::cout << markedChar << std::endl;
+
     std::pair<char,int> tempPair;
     for (int i = 0; i < searchLength; i++) {
         tempPair.first = searchString[i];
@@ -315,8 +324,8 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
 
     for (int k = 0; k < badCharTable.size(); k++) { //mark character
         if (badCharTable[k].first == markedChar) {
-            badCharTable.erase(badCharTable.begin()+k);
-            k--;
+            //badCharTable.erase(badCharTable.begin()+k);
+            //k--;
         }
         if (badCharTable[k].second == 0) { // Max (1,0)
             badCharTable[k].second = 1;

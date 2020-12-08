@@ -83,6 +83,7 @@ class Boyer_Moore {
         static std::string processFile(std::string &filename);
         static void output(std::string &searchString, std::list<int> &foundIndexes, int &count, std::string &tag);
         static int badChar(int idx, std::string &inputString, std::string searchString, std::list<int> &foundIndexes, int &count, int searchLength, std::vector<std::pair<char,int>> &badCharTable);
+        static char randChar(); // generates random character (acsii 32-126)
         static void generateBadCharTable(int searchLength, std::string &searchString, std::vector<std::pair<char,int>> &badCharTable);
         static void countObjs();
 

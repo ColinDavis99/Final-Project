@@ -14,7 +14,7 @@ be presented with a interactive model of the program.
 Here, the user will enter a string to search for inside of full character, symbols, phrases 
 etc.
                                       
-                                      OR
+                                              OR
 
 Be able to enter a .txt file of their choice
 

@@ -197,6 +197,7 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::on_pushButton_clicked() { // run search button
+
     std::string getSearch = ui->lineEdit->text().toStdString(); // gets search from textbox
     std::string getSource; // gets source (what you are searching through) from textbox
     if (usingFile) {
@@ -221,103 +222,94 @@ void MainWindow::on_pushButton_clicked() { // run search button
         return;
     }
 
-    Boyer_Moore* Boyer_Moore1;
-    Rabin_Karp* Rabin_Karp1;
-
     if (isBoyerMoore) {
-            Boyer_Moore1 = new Boyer_Moore(getSource, getSearch, false, caseSensitive);
-            Boyer_Moore1->search(supressOutput);
+            Boyer_Moore Boyer_Moore1(getSource, getSearch, false, caseSensitive);
+            Boyer_Moore1.search(supressOutput);
+
+            // Setting Labels with results & formatting
+            QString occurencesLabel = "The string '";
+            occurencesLabel += QString::fromStdString(getSearch);
+            occurencesLabel += "' was found ";
+
+            lastSearch = "BM";
+            occurencesLabel += QString::number(Boyer_Moore1.getOccurrences());
+            if (Boyer_Moore1.getOccurrences() == 1) {
+                occurencesLabel += " time";
+            } else {
+                occurencesLabel += " times";
+            }
+            ui->label_7->setText(occurencesLabel);
+
+            std::string runtimeLabel = "This search took ";
+            std::string runtime = std::to_string(Boyer_Moore1.getRunTime());
+            runtime.erase(runtime.find_last_not_of('0') + 1, std::string::npos); // removes trailing zeros from result after to_string formatting
+            if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
+                runtime += '0';
+            }
+
+            //converts microseconds to seconds for large values of runtimes
+            if (std::stod(runtime) > 10000){
+                runtime=std::to_string(std::stod(runtime)/1000000);
+                runtimeLabel += runtime;
+                runtimeLabel += " Seconds";
+            } else {
+                runtimeLabel += runtime;
+                runtimeLabel += " microseconds";
+            }
+
+            ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
+
+            ui->label_9->setText(QString::fromStdString(Boyer_Moore1.getBadCharTableHTML())); // set HTMl table
+
+            BMsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
+            BMruntimes.push_back(Boyer_Moore1.getRunTime());
     } else {
-            Rabin_Karp1 = new Rabin_Karp(getSource, getSearch, false, caseSensitive);
-            Rabin_Karp1->search(supressOutput);
-    }
+            Rabin_Karp Rabin_Karp1(getSource, getSearch, false, caseSensitive);
+            Rabin_Karp1.search(supressOutput);
+            // Setting Labels with results & formatting
+            QString occurencesLabel = "The string '";
+            occurencesLabel += QString::fromStdString(getSearch);
+            occurencesLabel += "' was found ";
 
+            lastSearch = "RK";
+            occurencesLabel += QString::number(Rabin_Karp1.getOccurrences());
+            if (Rabin_Karp1.getOccurrences() == 1) {
+                occurencesLabel += " time";
+            } else {
+                occurencesLabel += " times";
+            }
+            ui->label_7->setText(occurencesLabel);
 
-    // Setting Labels with results & formatting
-    QString occurencesLabel = "The string '";
-    occurencesLabel += QString::fromStdString(getSearch);
-    occurencesLabel += "' was found ";
-    std::string runtimeLabel = "This search took ";
-    std::string runtime;
+            std::string runtime = std::to_string(Rabin_Karp1.getRunTime());
+            runtime.erase(runtime.find_last_not_of('0') + 1, std::string::npos); // removes trailing zeros from result after to_string formatting
+            if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
+                runtime += '0';
+            }
 
-    if (isBoyerMoore) {
-        lastSearch = "BM";
-        occurencesLabel += QString::number(Boyer_Moore1->getOccurrences());
-        if (Boyer_Moore1->getOccurrences() == 1) {
-            occurencesLabel += " time";
-        } else {
-            occurencesLabel += " times";
-        }
-        ui->label_7->setText(occurencesLabel);
+            std::string runtimeLabel = "This search took ";
+            //converts microseconds to seconds for large values of runtimes
+            if (std::stod(runtime) > 10000){
+                runtime=std::to_string(std::stod(runtime)/1000000);
+                runtimeLabel += runtime;
+                runtimeLabel += " Seconds";
+            } else {
+                runtimeLabel += runtime;
+                runtimeLabel += " microseconds";
+            }
 
-        std::string runtime = std::to_string(Boyer_Moore1->getRunTime());
-        runtime.erase(runtime.find_last_not_of('0') + 1, std::string::npos); // removes trailing zeros from result after to_string formatting
-        if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
-            runtime += '0';
-        }
+            ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
 
-        //converts microseconds to seconds for large values of runtimes
-        if (std::stod(runtime) > 10000){
-            runtime=std::to_string(std::stod(runtime)/1000000);
-            runtimeLabel += runtime;
-            runtimeLabel += " Seconds";
-        } else {
-            runtimeLabel += runtime;
-            runtimeLabel += " microseconds";
-        }
+            QString searchHash = "The hash of ";
+            searchHash += ui->lineEdit->text();
+            searchHash += " is: ";
+            searchHash += QString::fromStdString(Rabin_Karp1.getHash());
+            ui->label_9->setText(searchHash); // set search string hash for Rabin-Karp
 
-        ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
-
-        ui->label_9->setText(QString::fromStdString(Boyer_Moore1->getBadCharTableHTML())); // set HTMl table
-
-        BMsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
-        BMruntimes.push_back(Boyer_Moore1->getRunTime());
-
-    } else {
-        lastSearch = "RK";
-        occurencesLabel += QString::number(Rabin_Karp1->getOccurrences());
-        if (Rabin_Karp1->getOccurrences() == 1) {
-            occurencesLabel += " time";
-        } else {
-            occurencesLabel += " times";
-        }
-        ui->label_7->setText(occurencesLabel);
-
-        std::string runtime = std::to_string(Rabin_Karp1->getRunTime());
-        runtime.erase(runtime.find_last_not_of('0') + 1, std::string::npos); // removes trailing zeros from result after to_string formatting
-        if (runtime[runtime.length()-1] == '.') { // special case where it is an integer. Ex: 19.00000 would become 19. so we make it 19.0
-            runtime += '0';
-        }
-
-        //converts microseconds to seconds for large values of runtimes
-        if (std::stod(runtime) > 10000){
-            runtime=std::to_string(std::stod(runtime)/1000000);
-            runtimeLabel += runtime;
-            runtimeLabel += " Seconds";
-        } else {
-            runtimeLabel += runtime;
-            runtimeLabel += " microseconds";
-        }
-
-        ui->label_8->setText(QString::fromStdString(runtimeLabel)); // set runtime label
-
-        QString searchHash = "The hash of ";
-        searchHash += ui->lineEdit->text();
-        searchHash += " is: ";
-        searchHash += QString::fromStdString(Rabin_Karp1->getHash());
-        ui->label_9->setText(searchHash); // set search string hash for Rabin-Karp
-
-        RKsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
-        RKruntimes.push_back(Rabin_Karp1->getRunTime());
+            RKsizes.push_back((double)getSource.length()); // push size of source (num of character) to sizes vector for plotting x axis
+            RKruntimes.push_back(Rabin_Karp1.getRunTime());
     }
 
     MainWindow::makePlot(); // graph results
-
-    if (isBoyerMoore) {
-        delete Boyer_Moore1;
-    } else if (isRabinKarp) {
-        delete Rabin_Karp1;
-    }
 
 }
 

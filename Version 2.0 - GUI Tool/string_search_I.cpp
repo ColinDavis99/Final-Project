@@ -173,10 +173,6 @@ void Rabin_Karp::search(bool supressOutput) { // performs the actual string sear
 
 }
 
-// Destructor
-Rabin_Karp::~Rabin_Karp() {
-    delete this; // delete whole object
-}
 
 //--------------------------------------------------------------------------------------------------------------------------------
 //                                              | Boyer-Moore |
@@ -387,8 +383,4 @@ void Boyer_Moore::search(bool supressOutput) { // performs the actual string sea
         output(searchString, foundIndexes, count, tag);
     }
 
-}
-
-Boyer_Moore::~Boyer_Moore() {
-    delete this; // delete whole object
 }

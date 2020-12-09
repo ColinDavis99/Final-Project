@@ -49,9 +49,6 @@ class Rabin_Karp {
         // object functions
         void findRunTime(std::chrono::steady_clock::time_point &t_start);
         void search(bool supressOutput); //search the file or input string for the search string
-
-        // destructor
-       ~Rabin_Karp();
 };
 
 class Boyer_Moore {
@@ -94,8 +91,6 @@ class Boyer_Moore {
         void findRunTime(std::chrono::steady_clock::time_point &t_start);
         void search(bool surpressOutput); //search the file or input string for the search string
 
-        // destructor
-        ~Boyer_Moore();
 };
 
 

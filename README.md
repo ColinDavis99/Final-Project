@@ -8,7 +8,7 @@ Once opened in QT IDE click "configure" in oder to build and run fully functioni
 
 Understanding UI
 --------------------------------------------------------------------------------------------
-After Clicking the green play button located in the left corner of the screen, the user will
+After clicking the green play button located in the left corner of the screen, the user will
 be presented with a interactive model of the program.
 
 Here, the user will enter a string to search for inside of full character, symbols, phrases 
@@ -18,10 +18,9 @@ etc.
 
 Be able to enter a .txt file of their choice
 
-Proceeding further, the user will have the option to choose which sorting algorithm, if the 
-userwould like to account for capital letters, as well as supressing the output of the
-found indexes when 
-inputting largefiles.
+Proceeding further, the user will have the option to choose which sorting algorithm, account 
+for capital letters, as well as supressing the output of thefound indexes when inputting 
+large files.
 
 When the Rabin Karp Search is ran, the user will then be prompted with a display of the time the
 search took, how many matches were found, as well as the hash value of the inputted string

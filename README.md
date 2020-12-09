@@ -19,11 +19,7 @@ After clicking the green play button located in the left corner of the screen, t
 be presented with a interactive model of the program.
 
 Here, the user will enter a string to search for inside of full character, symbols, phrases 
-etc.
-                                      
-                                              OR
-
-Be able to enter a .txt file of their choice
+etc. or Be able to enter a .txt file of their choice
 
 Proceeding further, the user will have the option to choose which sorting algorithm, account 
 for capital letters, as well as supressing the output of thefound indexes when inputting 

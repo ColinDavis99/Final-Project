@@ -318,8 +318,8 @@ void Boyer_Moore::generateBadCharTable(int searchLength, std::string &searchStri
 
     for (int k = 0; k < badCharTable.size(); k++) { //mark character
         if (badCharTable[k].first == markedChar) {
-            //badCharTable.erase(badCharTable.begin()+k);
-            //k--;
+            badCharTable.erase(badCharTable.begin()+k);
+            k--;
         }
         if (badCharTable[k].second == 0) { // Max (1,0)
             badCharTable[k].second = 1;
